@@ -57,11 +57,14 @@ let router = (url, method) => {
                 serve(req, res, (error, qqq) => {
                     console.log(error);
                 });
+            },
+            "/all_primes": (req, res) => {
+                res.end(JSON.stringify({ error: 'Not implemented' }));
             }
         },
         "default": (req, res) => {
             res.statusCode = 404;
-            res.end('Route not found');
+            res.end(JSON.stringify({ error: 'Route not found' }));
         }
     };
     return routes[method][url] || routes.default;
