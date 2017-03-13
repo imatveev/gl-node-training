@@ -1,30 +1,31 @@
 "use strict";
 
 const http = require("http");
+const serveStatic = require('serve-static');
 
 let server = http.createServer();
-
+let serve = serveStatic('public');
 const getPrimeNumber = (min, max) => {
     if (max < min) {
-        return "Incorrect range";
+        return { error: "Incorrect range" };
     }
 
-    var primes = [];
+    let primes = [];
 
-    for (var i = 0; i <= max; i++) {
+    for (let i = 0; i <= max; i++) {
         primes[i] = 0;
     }
 
-    for (var i = 3; i * i <= max; i++) {
-        for (var j = i + i; j <= max; j = j + i) {
+    for (let i = 3; i * i <= max; i++) {
+        for (let j = i + i; j <= max; j = j + i) {
             primes[j] = 1;
         }
     }
 
     min = min % 2 === 0 ? min + 1 : min;
-    for (var i = min; i <= max; i += 2) {
+    for (let i = min; i <= max; i += 2) {
         if (!primes[i]) {
-            return i;
+            return { primeNumber: i };
         }
     }
 
@@ -32,35 +33,40 @@ const getPrimeNumber = (min, max) => {
 };
 
 server.on("request", (req, res) => {
-    if (req.method === "POST") {
-        router(req.url)(req, res);
-    }
-    else {
-        res.end("Not developed yet");
-    }
+    router(req.url, req.method)(req, res);
 });
 
-let router = url => {
+let router = (url, method) => {
     let routes = {
-        "/prime_number": (req, res) => {
-            let body = [];
-            req.on("data", data => {
-                body.push(data);
-            });
-            req.on("end", () => {
-                let totalBuffer = Buffer.concat(body);
-                let interval = JSON.parse(totalBuffer.toString());
-                let result = getPrimeNumber(interval[0], interval[1]);
-                res.end(result + "");
-            });
+        POST: {
+            "/prime_number": (req, res) => {
+                let body = [];
+                req.on("data", data => {
+                    body.push(data);
+                });
+                req.on("end", () => {
+                    let totalBuffer = Buffer.concat(body);
+                    let interval = JSON.parse(totalBuffer.toString());
+                    let result = getPrimeNumber(parseInt(interval[0]), parseInt(interval[1]));
+                    res.end(JSON.stringify(result));
+                });
+            }
+        },
+        GET: {
+            "/": (req, res) => {
+                serve(req, res, (error, qqq) => {
+                    console.log(error);
+                });
+            }
         },
         "default": (req, res) => {
-            res.end("Not found");
+            res.statusCode = 404;
+            res.end('Route not found');
         }
     };
-    return routes[url] || routes.default;
+    return routes[method][url] || routes.default;
 };
 
-server.listen(3000, (error) => {
+server.listen(3000, () => {
     console.log("Started");
 });
