@@ -18,6 +18,7 @@
 
 
             <button class="btn btn-default" id="prime-send" type="button" name="button">Send</button>
+            <button class="btn btn-default" id="prime-get-list" type="button" name="button">Get list of primes</button>
         </div>
     </body>
     <style media="screen">
@@ -53,7 +54,23 @@
             .then(res => res.json())
             .then(data => {
                 console.log(data);
-            })
+            });
         });
+            document.querySelector('#prime-get-list')
+            .addEventListener('click', event => {
+                fetch(
+                    'http://localhost:3000/all_primes',
+                    {
+                        headers: {
+                            'Accept':       'application/json',
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                )
+                .then(res => res.json())
+                .then(data => {
+                    console.log(data);
+                });
+            });
     </script>
 </html>
