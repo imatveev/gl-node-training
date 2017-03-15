@@ -1,10 +1,8 @@
 "use strict";
 
 const http = require("http");
-const serveStatic = require('serve-static');
 
 let server = http.createServer();
-let serve = serveStatic('public');
 const getPrimeNumber = (min, max) => {
     if (max < min) {
         return { error: "Incorrect range" };
