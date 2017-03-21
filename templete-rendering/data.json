@@ -1,0 +1,17 @@
+{
+  "node": "Node.js",
+  "js": "JavaScript",
+  "linux": "Linux",
+  "lts": "LTS",
+  "foundation": "Foundation",
+  "menu": {
+    "home": "Home",
+    "about": "About",
+    "downloads": "Downloads",
+    "docs": "Docs",
+    "foundation": "Foundation",
+    "get_involved": "Get Involved",
+    "sequrity": "Sequrity",
+    "news": "News"
+  }
+}
