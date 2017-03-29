@@ -3,14 +3,8 @@
 const http     = require("http");
 const fork     = require('child_process').fork;
 const fs       = require('fs');
-const mongoose = require('mongoose');
 
-mongoose.connect('mongodb://localhost/node-training');
-
-
-let User = mongoose.model('User', { name: String });
-
-
+const models = require("./models");
 const utils = require('./utils');
 
 let server = http.createServer();
@@ -40,7 +34,7 @@ let router = (url, method) => {
             },
             '/users': (req, res) => {
 
-                let user = new User({ name: 'John' });
+                let user = new models.User({ name: 'John' });
                 user.save(function (err) {
                   if (err) {
                     return console.log(err);
@@ -61,10 +55,10 @@ let router = (url, method) => {
             },
             '/users': (req, res) => {
 
-                User.find((err, users) => {
+                models.User.find((err, users) => {
                   if (err) return console.error(err);
-                  res.end(JSON.stringify(users))
-                })
+                  res.end(JSON.stringify(users));
+                });
 
             }
         },
