@@ -1,8 +1,15 @@
 "use strict";
 
-const http = require("http");
-const fork = require('child_process').fork;
-const fs = require('fs');
+const http     = require("http");
+const fork     = require('child_process').fork;
+const fs       = require('fs');
+const mongoose = require('mongoose');
+
+mongoose.connect('mongodb://localhost/node-training');
+
+
+let User = mongoose.model('User', { name: String });
+
 
 const utils = require('./utils');
 
@@ -32,8 +39,16 @@ let router = (url, method) => {
                     });
             },
             '/users': (req, res) => {
-                console.log('!!!!!');
-                res.end(JSON.stringify({res: 'ponse'}))
+
+                let user = new User({ name: 'John' });
+                user.save(function (err) {
+                  if (err) {
+                    return console.log(err);
+                  }
+                console.log('John was created!!!!');
+                });
+
+                res.end(JSON.stringify({res: 'John'}))
             }
         },
         GET: {
@@ -43,6 +58,14 @@ let router = (url, method) => {
             },
             "/all_primes": (req, res) => {
                 res.end(JSON.stringify({error: 'Not implemented'}));
+            },
+            '/users': (req, res) => {
+
+                User.find((err, users) => {
+                  if (err) return console.error(err);
+                  res.end(JSON.stringify(users))
+                })
+
             }
         },
         "default": (req, res) => {
