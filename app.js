@@ -12,8 +12,6 @@ server.on("request", (req, res) => {
     router(req.url, req.method)(req, res);
 });
 
-
-
 let router = (url, method) => {
     let routes = {
         POST: {
