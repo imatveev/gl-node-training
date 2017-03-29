@@ -31,6 +31,10 @@ let router = (url, method) => {
 
                         worker.send({min: parseInt(interval[0]), max: parseInt(interval[1])});
                     });
+            },
+            '/users': (req, res) => {
+                console.log('!!!!!');
+                res.end(JSON.stringify({res: 'ponse'}))
             }
         },
         GET: {
