@@ -1,3 +1,5 @@
+"use strict";
+
 const fs        = require('fs');
 const router    = require("koa-router")();
 const models    = require("./models");
@@ -44,6 +46,11 @@ router
 
         //     worker.send({min: parseInt(interval[0]), max: parseInt(interval[1])});
         // });
+    })
+    .all("*", function *() {
+        // default route, not found
+        this.status = 404;
+        this.body = {error: 'Route not found'};
     });
 
 module.exports = router;
