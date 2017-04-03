@@ -21,7 +21,7 @@ router
     })
     .post("/users", function *(next) {
         try {
-            this.body = yield new models.User({ name: "John", ssurname: "Smith" }).save();
+            this.body = yield new models.User({ name: "John"}).save();
         } catch (err) {
             this.throw("Unable to save user");
         }
