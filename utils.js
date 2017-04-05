@@ -1,30 +1,46 @@
 "use strict";
 
-module.exports.getRequestBody = getRequestBody;
+const fork = require('child_process').fork;
 
-function getRequestBody(req) {
-    return new Promise((resolve, reject) => {
-        let body = [];
+module.exports = {
+    getRequestBody(req) {
+        return new Promise((resolve, reject) => {
+            let body = [];
 
-        req.on("data", data => {
-            body.push(data);
+            req.on("data", data => {
+                body.push(data);
+            });
+
+            req.on("error", data => {
+                reject(data);
+            });
+
+            req.on("end", () => {
+                let totalBuffer = Buffer.concat(body).toString();
+                let parsedBody;
+
+                try {
+                    parsedBody = JSON.parse(totalBuffer);
+                } catch (e) {
+                    parsedBody = totalBuffer;
+                }
+
+                resolve(parsedBody);
+            });
         });
-
-        req.on("error", data => {
-            reject(data);
+    },
+    processInterval(worker, [ min, max ]) {
+        return new Promise(resolve => {
+            worker.send({ min: parseInt(min), max: parseInt(max) });
+            worker.on('message', result => {
+                resolve(result);
+            });
         });
-
-        req.on("end", () => {
-            let totalBuffer = Buffer.concat(body).toString();
-            let parsedBody;
-
-            try {
-                parsedBody = JSON.parse(totalBuffer);
-            } catch (e) {
-                parsedBody = totalBuffer;
-            }
-
-            resolve(parsedBody);
+    },
+    getWorker(){
+        return fork('./prime.js')
+        .on('exit', () => {
+            console.log('Worker killed!!!!!');
         });
-    })
-}
+    }
+};

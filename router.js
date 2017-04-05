@@ -1,8 +1,9 @@
 "use strict";
 
-const fs        = require('fs');
-const router    = require("koa-router")();
-const models    = require("./models");
+const fs     = require('fs');
+const router = require("koa-router")();
+const models = require("./models");
+const utils  = require('./utils');
 
 router
     .get("/", function *(next) {
@@ -27,25 +28,25 @@ router
         }
     })
     .post("/prime_number", function *(next) {
-        // @TODO
+        console.log('CONTROLLER');
+        let interval = yield utils.getRequestBody(this.req);
 
-        // const fork     = require('child_process').fork;
-        // const utils = require('./utils');
+        let worker = utils.getWorker();
 
-        // utils.getRequestBody(req)
-        // .then(interval => {
-        //     let worker = fork('./prime.js');
+        let result = yield utils.processInterval(worker, interval);
 
-        //     worker.on('exit', () => {
-        //         console.log('Worker killed!!!!!');
-        //     });
+        this.body = result;
+    })
+    .use('', function*(next){
+        // this.status = 203;
+        console.log('First preprocessor');
 
-        //     worker.on('message', result => {
-        //         res.end(JSON.stringify(result));
-        //     });
+        yield next;
+    })
+    .use('', function*(next) {
+        console.log('Second preprocessor');
 
-        //     worker.send({min: parseInt(interval[0]), max: parseInt(interval[1])});
-        // });
+        yield next;
     })
     .all("*", function *() {
         // default route, not found
