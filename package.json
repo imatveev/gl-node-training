@@ -18,6 +18,8 @@
   },
   "homepage": "https://github.com/imatveev/gl-node-training#readme",
   "dependencies": {
+    "koa": "^1.4.0",
+    "koa-router": "^5.4.1",
     "mongoose": "^4.9.2",
     "serve-static": "^1.12.1"
   }
